@@ -47,6 +47,10 @@ bookingSchema.pre('save', async function (next) {
       return next(new Error('Email must be a valid email address'));
     }
 
+    if (!this.isModified('eventId')) {
+      return next();
+    }
+
     // Verify that the referenced event exists before creating the booking.
     const EventModel = mongoose.models.Event as mongoose.Model<EventDocument> | undefined;
 
