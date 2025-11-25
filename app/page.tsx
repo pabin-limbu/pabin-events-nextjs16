@@ -8,6 +8,7 @@ const Page = async () => {
 
     'use cache';
     cacheLife('hours');
+    console.log("pabin")
 
     const response = await fetch(`${BASE_URL}/api/events`);
 
