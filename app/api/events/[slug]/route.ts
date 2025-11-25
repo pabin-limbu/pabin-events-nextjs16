@@ -41,8 +41,6 @@ interface RouteContext {
 export async function GET(_request: NextRequest, context: RouteContext): Promise<NextResponse> {
     const {slug: rawSlug} = await context.params;
 
-    console.log('rawSlug', rawSlug);
-
     // Validate that slug is provided and not just whitespace.
     if (typeof rawSlug !== 'string' || rawSlug.trim().length === 0) {
         return jsonError('Slug parameter is required', 400);

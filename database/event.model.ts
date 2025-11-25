@@ -104,7 +104,7 @@ const eventSchema = new Schema<EventDocument, EventModel>(
         title: requiredString('Title'),
         slug: {
             type: String,
-
+// Auto-generated from title in pre-save hook; unique index enforced separately
         },
         description: requiredString('Description'),
         overview: requiredString('Overview'),

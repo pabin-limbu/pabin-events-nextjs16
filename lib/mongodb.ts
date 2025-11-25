@@ -72,8 +72,6 @@ export async function connectToDatabase(): Promise<Mongoose> {
     // If we already have an established connection, return it immediately.
     if (cached.conn) {
         return cached.conn;
-    } else {
-        console.log("no cached connection");
     }
 
     // If there is no ongoing connection attempt, start one and cache the promise.
@@ -91,7 +89,7 @@ export async function connectToDatabase(): Promise<Mongoose> {
 
     try {
         cached.conn = await cached.promise;
-        console.log("reached here");
+
     } catch (error) {
         // Reset promise so future calls can retry connecting in case of failure.
         cached.promise = null;

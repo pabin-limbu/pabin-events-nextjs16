@@ -6,6 +6,8 @@ import {v2 as cloudinary} from "cloudinary";
 export async function POST(req: NextRequest): Promise<NextResponse> {
 
     try {
+
+
         await connectToDatabase();
         const formData: FormData = await req.formData();
         let event;
@@ -37,19 +39,35 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
             }).end(buffer);
         })
 
-        event.image = (uploadResult as { secure_url: string }).secure_url;
+        //event.image = (uploadResult as { secure_url: string }).secure_url;
+        const cloudinaryResult = uploadResult as { secure_url?: string };
+        if (!cloudinaryResult.secure_url) {
+            return NextResponse.json({message: "Image upload failed: no URL returned"}, {status: 500});
+        }
+        event.image = cloudinaryResult.secure_url;
+
+// Validate required fields
+        const requiredFields = ['title', 'description', 'overview', 'venue', 'location', 'date', 'time', 'mode', 'audience', 'organizer'];
+        const missingFields = requiredFields.filter(field => !event[field]);
+
+        if (missingFields.length > 0) {
+            return NextResponse.json({
+                message: `Missing required fields: ${missingFields.join(', ')}`
+            }, {status: 400});
+        }
 
         const createdEvent: EventDocument = await Event.create({...event, tags: tags, agenda: agenda});
         return NextResponse.json({message: "Event Created Successfully", event: createdEvent}, {status: 201});
 
     } catch (e) {
-        console.log(e);
+        console.error('Error creating event:', e);
         return NextResponse.json({
             message: "Event creation failed",
             error: e instanceof Error ? e.message : 'unknown'
         }, {status: 500});
     }
 }
+
 
 export async function GET() {
     try {
