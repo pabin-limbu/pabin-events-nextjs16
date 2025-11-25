@@ -12,10 +12,18 @@ const NavBar = () => {
 
                 </Link>
 
-                <ul>
-                    <Link href={'/'}>home</Link>
-                    <Link href={'/'}>Event</Link>
-                    <Link href={'/'}>Create Event</Link>
+                <ul className={"list-none"}>
+                    <li>
+                        <Link href={'/'}>Home</Link>
+                    </li>
+                    <li>
+                        <Link href={'/'}>Event</Link>
+                    </li>
+
+                    <li>
+                        <Link href={'/'}>Create Event</Link>
+                    </li>
+
                 </ul>
             </nav>
         </header>
