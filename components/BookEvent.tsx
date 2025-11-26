@@ -1,8 +1,10 @@
 'use client'
 
 import React, {useState} from 'react'
+import {createBooking} from "@/lib/actions/booking.action";
+import posthog from "posthog-js";
 
-const BookEvent = () => {
+const BookEvent = ({eventId, slug}: { eventId: string, slug: string }) => {
 
     const [email, setEmail] = useState("");
     const [submitted, setSubmitted] = useState(false);
@@ -10,9 +12,16 @@ const BookEvent = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        setTimeout(() => {
+        const {success, error} = await createBooking({eventId, slug, email});
+
+        if (success) {
             setSubmitted(true);
-        }, 1000)
+            posthog.capture('event booked', {eventId, slug, email});
+        } else {
+            console.error('booking creation failed')
+            posthog.captureException('booking creation failed')
+        }
+
 
         // try {
         //     const response = await fetch('/api/book-event', {

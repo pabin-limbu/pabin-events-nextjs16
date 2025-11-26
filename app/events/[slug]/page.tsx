@@ -6,6 +6,7 @@ import {EventDocument} from "@/database";
 import {getSimilarEventsBySlug} from "@/lib/actions/event.actions";
 import EventCard from "@/components/EventCard";
 import {EventType} from "@/database/event.model";
+import {cacheLife} from "next/cache";
 
 const BASE_URL: string = process.env.NEXT_PUBLIC_BASE_URL ?? "";
 
@@ -46,32 +47,27 @@ const EventTags = ({tags}: { tags: string[] }) => (
 const EventDetailsPage = async ({params}: {
     params: Promise<{ slug: string }>
 }) => {
+    'use cache'
+    cacheLife('hours')
 
     const {slug} = await params;
     const booking = 10;
-
+    let event;
 
     try {
         const request = await fetch(`${BASE_URL}/api/events/${slug}`);
         if (!request.ok) {
             return notFound();
         }
-        const {
-            event: {
-                description,
-                image,
-                overview,
-                date,
-                time,
-                location,
-                mode,
-                agenda,
-                audience,
-                tags,
-                organizer
-            }
-        } = await request.json();
 
+        const response = await request.json();
+        event = response.event;
+
+
+        if (!event) {
+            return notFound();
+        }
+        const {description, image, overview, date, time, location, mode, agenda, audience, tags, organizer} = event;
         if (!description) return notFound();
 
 
@@ -116,8 +112,9 @@ const EventDetailsPage = async ({params}: {
                             {booking > 0 ? (
                                 <p className={"text-sm"}>
                                     join the {booking} others who have booked their spot!
-                                </p>) : (<p className={"text-red-500"}>Be the first to book yout r spot</p>)}
-                            <BookEvent/>
+                                </p>) : (<p className={"text-red-500"}>Be the first to book your spot</p>)}
+                            <BookEvent eventId={event.id} slug={event.slug}/>
+
                         </div>
 
                     </aside>
