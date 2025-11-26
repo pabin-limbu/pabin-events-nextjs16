@@ -2,7 +2,7 @@ import ExploreBtn from "@/components/ExploreBtn";
 import EventCard from "@/components/EventCard";
 import {EventDocument} from "@/database";
 import {cacheLife} from "next/cache";
-import events from "@/data/events.json";
+import events from "@/lib/constants";
 
 // const BASE_URL: string = process.env.NEXT_PUBLIC_BASE_URL ?? "";
 const Page = async () => {
